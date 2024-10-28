@@ -43,13 +43,15 @@
     </style>
 </head>
 <body>
+
     <div id="landing">
         <input type="text" id="username" placeholder="Username">
         <button id="join-btn">JOIN</button>
+        <p style="display:none; color: red;" id="wrong_name">Username is incorrect!!! Try again!</p>
     </div>
 
     <div id="chat" style="display:none;">
-
+        <h3 style="text-align:center;">{{ var_val }}</h3>
         <ul id="chat-messages">
         </ul>
         <input type="text" id="message" placeholder="Enter a Message">
@@ -60,18 +62,43 @@
         document.getElementById("join-btn").addEventListener("click", function() {
             let username = document.getElementById("username").value;
 
-            socket.connect();
+            if (username == "{{ name1 }}" || username == "{{ name2 }}" ){
 
-            socket.on("connect", function() {
-                socket.emit("user_join", username);
-            })
+                socket.connect();
 
-            document.getElementById("chat").style.display = "block";
-            document.getElementById("landing").style.display = "none";
+                socket.on("connect", function() {
+                        socket.emit("user_join", username);
+                })
+
+                document.getElementById("chat").style.display = "block";
+                document.getElementById("landing").style.display = "none";
+
+            } else {
+                document.getElementById("wrong_name").style.display = "";
+            }
         })
+
+        // document.getElementById("username") is a bit redundant
+        // document.getElementById("username").addEventListener("keyup", event => {
+        //     event.preventDefault();
+        //     if (event.keyCode === 13) {
+        //         let username = document.getElementById("username").value;
+
+        //         socket.connect();
+
+        //         socket.on("connect", function() {
+        //             socket.emit("user_join", username);
+        //         })
+
+        //         document.getElementById("chat").style.display = "block";
+        //         document.getElementById("landing").style.display = "none";
+        //     }
+        // })
+
 
         document.getElementById("message").addEventListener("keyup", function (event) {
             if (event.key == "Enter") {
+            // if (event.keyCode === 13 ) {
                 let message = document.getElementById("message").value;
                 socket.emit("new_message", message);
                 document.getElementById("message").value = "";
